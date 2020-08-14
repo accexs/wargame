@@ -10,12 +10,13 @@ class English extends Army
 {
 
     protected $armyInitConfig = [
-        'archer' => 10,
-        'knight' => 10,
-        'pikeman' => 10,
+        'archer' => 1,
+        'knight' => 1,
+        'pikeman' => 1,
     ];
 
-    public function __construct($name) {
+    public function __construct($name)
+    {
         $this->name = $name;
         $this->initArmy();
     }

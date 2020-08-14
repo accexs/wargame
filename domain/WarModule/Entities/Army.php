@@ -89,8 +89,12 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
         return $this->armyDistribution->sortByDesc('strength');
     }
 
-    public function armyDistribution()
+    public function getArmyDistribution()
     {
+        // TODO: identify only updated units.
+        $this->armyDistribution->transform(function ($soldier) {
+            return $soldier['object']->getStats() + ['object' => $soldier['object']];
+        });
         return $this->armyDistribution;
     }
 

@@ -8,6 +8,7 @@ use Domain\WarModule\Entities\Army;
 
 class Battle
 {
+
     const IS_TIE = 'tie';
 
     const HAS_WINNER = 'has_winner';
@@ -63,6 +64,6 @@ class Battle
 
     public function publishResults()
     {
-        // publish battle result to the battle record. observer
+        // TODO: publish battle result to the battle record with and event, a push to the repo might be enough
     }
 }

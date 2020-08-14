@@ -4,7 +4,10 @@
 namespace Domain\WarModule\Entities\Units;
 
 
+use App\Events\Domain\WarModule\UnitTrained;
+use Domain\WarModule\Entities\Army;
 use Illuminate\Support\Str;
+use ReflectionClass;
 
 abstract class Soldier
 {
@@ -24,16 +27,18 @@ abstract class Soldier
         $this->id = Str::random(9);
     }
 
-    public function training()
+    public function training(Army $army)
     {
         $this->strengthPoints = $this->strengthPoints + $this->ratePoints;
+        event(new UnitTrained($army, $this));
+        return $this;
     }
 
     public function getStats()
     {
         return [
             'id' => $this->id,
-            'class' => strtolower((new \ReflectionClass($this))->getShortName()),
+            'class' => strtolower((new ReflectionClass($this))->getShortName()),
             'strength' => $this->strengthPoints,
             'training_cost' => $this->trainingCost,
             'rate_points' => $this->ratePoints,
