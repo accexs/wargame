@@ -14,7 +14,7 @@ trait TreasuryTrait
 
     public function removeGold(int $gold)
     {
-        // validate negative
+        // TODO: validate negative
         $this->treasure = $this->treasure - $gold;
     }
 

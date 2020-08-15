@@ -17,3 +17,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('warmodule/army', 'ArmyController@create');
+Route::get('warmodule/army', 'ArmyController@index');
+Route::put('warmodule/army/{army_id}/unit/{unit_id}/train',
+    'ArmyController@trainUnit');
+Route::put('warmodule/army/{army_id}/unit/{unit_id}/transform',
+    'ArmyController@transformUnit');
+Route::post('warmodule/battle', 'BattleController@battle');

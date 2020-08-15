@@ -69,16 +69,18 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
         if (empty($this->armyUnits)) {
             throw new Exception('No units on the army');
         }
-        $col = $this->armyUnits->filter(function ($soldier) use ($id) {
-            return $soldier['id'] != $id;
+        $col = $this->armyUnits->filter(function ($unit) use ($id) {
+            return $unit['id'] != $id;
         });
-        $this->armyUnits = $col;
+        $this->armyUnits = $col->values();
         $this->calculateStrength();
+        return $this;
     }
 
-    private function calculateStrength(): Collection
+    private function calculateStrength()
     {
-        return $this->armyUnits->sum('strength');
+        $this->strength = $this->armyUnits->sum('strength');
+        return $this;
     }
 
     public function orderUnitsByStrength(int $slice = 0): Collection
@@ -96,6 +98,7 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
             $this->armyUnits->transform(function ($soldier) {
                 return $soldier['object']->getStats() + ['object' => $soldier['object']];
             });
+            $this->calculateStrength();
             return $this->armyUnits;
         }
         $this->armyUnits->transform(function ($soldier) use ($changedSoldier) {
@@ -104,6 +107,7 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
             }
             return $soldier;
         });
+        $this->calculateStrength();
         return $this->armyUnits;
     }
 

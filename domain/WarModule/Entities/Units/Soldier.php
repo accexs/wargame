@@ -12,9 +12,9 @@ use ReflectionClass;
 abstract class Soldier
 {
 
-    protected $id;
+    public $id;
 
-    protected $strengthPoints;
+    public $strengthPoints;
 
     protected $ratePoints;
 
@@ -43,20 +43,6 @@ abstract class Soldier
             'training_cost' => $this->trainingCost,
             'rate_points' => $this->ratePoints,
         ];
-    }
-
-    public function __set($name, $value)
-    {
-        trigger_error('Used magic method to set property'.PHP_EOL,
-            E_USER_WARNING);
-        $this->$name = $value;
-    }
-
-    public function __get($name)
-    {
-        trigger_error('Used magic method to access property'.PHP_EOL,
-            E_USER_WARNING);
-        return $this->$name;
     }
 
     public abstract function transform(Army $army): Soldier;

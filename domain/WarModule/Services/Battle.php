@@ -57,9 +57,17 @@ class Battle
             return $this;
         }
         $this->winner->addGold(100);
-        $this->loser->removeUnit($this->defender->orderUnitsByStrength(1));
+        $this->loser->removeUnit($this->defender->orderUnitsByStrength()->first()['id']);
         $this->loser->removeGold(100);
         return $this;
+    }
+
+    public function getBattleStats()
+    {
+        return [
+            'winner' => $this->winner->getArmyStats(),
+            'loser' => $this->loser->getArmyStats(),
+        ];
     }
 
     public function publishResults()

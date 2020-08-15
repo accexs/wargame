@@ -11,7 +11,7 @@ use ReflectionClass;
 abstract class CivilizationFactory
 {
 
-    public static function getCivilization(string $civName, string $armyName): Army
+    public static function createCivilizationArmy(string $civName, string $armyName): Army
     {
         $class = ucfirst($civName);
 
