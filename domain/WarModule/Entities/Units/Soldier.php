@@ -4,7 +4,7 @@
 namespace Domain\WarModule\Entities\Units;
 
 
-use App\Events\Domain\WarModule\UnitTrained;
+use App\Events\Domain\WarModule\UnitChanged;
 use Domain\WarModule\Entities\Army;
 use Illuminate\Support\Str;
 use ReflectionClass;
@@ -30,7 +30,7 @@ abstract class Soldier
     public function training(Army $army)
     {
         $this->strengthPoints = $this->strengthPoints + $this->ratePoints;
-        event(new UnitTrained($army, $this));
+        event(new UnitChanged($army, $this));
         return $this;
     }
 
@@ -59,6 +59,6 @@ abstract class Soldier
         return $this->$name;
     }
 
-    public abstract function transform();
+    public abstract function transform(Army $army): Soldier;
 
 }

@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Events\Domain\WarModule\UnitTrained;
-use App\Listeners\Domain\WarModule\Listeners\UnitTrainingNotification;
+use App\Events\Domain\WarModule\UnitChanged;
+use App\Listeners\Domain\WarModule\Listeners\UnitChangedNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -21,8 +21,8 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        UnitTrained::class => [
-            UnitTrainingNotification::class,
+        UnitChanged::class => [
+            UnitChangedNotification::class,
         ],
     ];
 

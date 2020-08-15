@@ -6,6 +6,7 @@ namespace Domain\WarModule\Entities;
 
 use Domain\WarModule\Contracts\ArmyBuilderInterface;
 use Domain\WarModule\Contracts\TreasuryInterface;
+use Domain\WarModule\Entities\Units\Soldier;
 use Domain\WarModule\Traits\TreasuryTrait;
 use Exception;
 use Illuminate\Support\Collection;
@@ -17,7 +18,7 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
 
     protected $id;
 
-    protected $armyDistribution;
+    protected $armyUnits;
 
     protected $name;
 
@@ -42,7 +43,7 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
         if (!$this->initialized) {
             throw new Exception('Army not initialized');
         }
-        $this->armyDistribution = $this->fillArmy();
+        $this->armyUnits = $this->fillArmy();
         $this->orderUnitsByStrength();
         $this->active = true;
         return $this;
@@ -65,37 +66,45 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
 
     public function removeUnit(string $id)
     {
-        if (empty($this->armyDistribution)) {
+        if (empty($this->armyUnits)) {
             throw new Exception('No units on the army');
         }
-        $col = $this->armyDistribution->filter(function ($soldier) use ($id) {
+        $col = $this->armyUnits->filter(function ($soldier) use ($id) {
             return $soldier['id'] != $id;
         });
-        $this->armyDistribution = $col;
+        $this->armyUnits = $col;
         $this->calculateStrength();
     }
 
     private function calculateStrength(): Collection
     {
-        return $this->armyDistribution->sum('strength');
+        return $this->armyUnits->sum('strength');
     }
 
     public function orderUnitsByStrength(int $slice = 0): Collection
     {
         if ($slice > 0) {
-            return $this->armyDistribution->sortByDesc('strength')
+            return $this->armyUnits->sortByDesc('strength')
                 ->slice($slice);
         }
-        return $this->armyDistribution->sortByDesc('strength');
+        return $this->armyUnits->sortByDesc('strength');
     }
 
-    public function getArmyDistribution()
+    public function refreshArmyDistribution(Soldier $changedSoldier = null)
     {
-        // TODO: identify only updated units.
-        $this->armyDistribution->transform(function ($soldier) {
-            return $soldier['object']->getStats() + ['object' => $soldier['object']];
+        if (empty($changedSoldier)) {
+            $this->armyUnits->transform(function ($soldier) {
+                return $soldier['object']->getStats() + ['object' => $soldier['object']];
+            });
+            return $this->armyUnits;
+        }
+        $this->armyUnits->transform(function ($soldier) use ($changedSoldier) {
+            if ($changedSoldier->id === $soldier['id']) {
+                return $changedSoldier->getStats() + ['object' => $changedSoldier];
+            }
+            return $soldier;
         });
-        return $this->armyDistribution;
+        return $this->armyUnits;
     }
 
     public function getArmyStats()
@@ -106,8 +115,12 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
             'name' => $this->name,
             'treasure' => isset($this->treasure) ? $this->treasure : 'N/A',
             'strength' => $this->strength,
-            'units' => $this->armyDistribution,
+            'units' => $this->armyUnits,
         ];
+    }
+
+    public function getArmyUnits() {
+        return $this->armyUnits;
     }
 
 }

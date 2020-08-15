@@ -2,11 +2,11 @@
 
 namespace App\Listeners\Domain\WarModule\Listeners;
 
-use App\Events\Domain\WarModule\UnitTrained;
+use App\Events\Domain\WarModule\UnitChanged;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class UnitTrainingNotification
+class UnitChangedNotification
 {
 
     /**
@@ -22,12 +22,12 @@ class UnitTrainingNotification
     /**
      * Handle the event.
      *
-     * @param  UnitTrained  $event
+     * @param  UnitChanged  $event
      *
      * @return void
      */
-    public function handle(UnitTrained $event)
+    public function handle(UnitChanged $event)
     {
-        $event->army->getArmyDistribution();
+        $event->army->refreshArmyDistribution($event->unit);
     }
 }

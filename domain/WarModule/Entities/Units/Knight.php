@@ -4,6 +4,8 @@
 namespace Domain\WarModule\Entities\Units;
 
 
+use Domain\WarModule\Entities\Army;
+
 class Knight extends Soldier
 {
 
@@ -15,7 +17,7 @@ class Knight extends Soldier
         $this->trainingCost = 30;
     }
 
-    public function transform()
+    public function transform(Army $army): Soldier
     {
         throw new \Exception('Knights cant transform into other units');
     }
