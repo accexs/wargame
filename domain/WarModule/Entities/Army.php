@@ -7,7 +7,6 @@ namespace Domain\WarModule\Entities;
 use Domain\WarModule\Contracts\ArmyBuilderInterface;
 use Domain\WarModule\Contracts\TreasuryInterface;
 use Domain\WarModule\Entities\Units\Soldier;
-use Domain\WarModule\Traits\RecordTrait;
 use Domain\WarModule\Traits\TreasuryTrait;
 use Exception;
 use Illuminate\Support\Carbon;
@@ -33,7 +32,6 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
     protected $record;
 
     use TreasuryTrait;
-    use RecordTrait;
 
     public function initArmy(): Army
     {
@@ -100,8 +98,8 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
         return $this;
     }
 
-    public function refreshArmyDistribution(Soldier $changedSoldier = null): Army
-    {
+    public function refreshArmyDistribution(Soldier $changedSoldier = null
+    ): Army {
         if (empty($changedSoldier)) {
             $this->armyUnits->transform(function ($soldier) {
                 return $soldier['object']->getStats() + ['object' => $soldier['object']];
