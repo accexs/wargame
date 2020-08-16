@@ -69,6 +69,7 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
         return collect($armyDistribution);
     }
 
+    // TODO: could transform id into an array and evaluate on the filter
     public function removeUnit(string $id): Army
     {
         if (empty($this->armyUnits)) {

@@ -73,6 +73,9 @@ class Battle implements BattleInterface
         $this->loser->removeUnit($this->defender->orderUnitsByStrength()
             ->getArmyUnits()
             ->first()['id']);
+        $this->loser->removeUnit($this->defender->orderUnitsByStrength()
+            ->getArmyUnits()
+            ->first()['id']);
         $this->loser->removeGold(100);
 
         return $this;
