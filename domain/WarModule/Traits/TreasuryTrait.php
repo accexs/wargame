@@ -18,7 +18,6 @@ trait TreasuryTrait
         $this->treasure = $this->treasure - $gold;
     }
 
-    // TODO: delete this
     public function getTreasure(): int
     {
         return $this->treasure;
