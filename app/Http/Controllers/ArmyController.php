@@ -11,6 +11,7 @@ class ArmyController extends Controller
 {
 
     // TODO: create an interface and repository class to handle cache
+    // TODO: think persistence strategy
     // TODO: validate all input
     // TODO: create standard response: success, not found, exception
 
@@ -58,6 +59,7 @@ class ArmyController extends Controller
             return $army->getArmyStats() + ['object' => $army];
         });
         $army = $armies->where('id', $army_id)->first();
+        // TODO: return not found for unit
         $unit = $army['units']->where('id', $unit_id)->first()['object']->training($army['object']);
         $armies->transform(function ($army) {
             return $army['object'];
@@ -77,6 +79,7 @@ class ArmyController extends Controller
             return $army->getArmyStats() + ['object' => $army];
         });
         $army = $armies->where('id', $army_id)->first();
+        // TODO: return not found for unit
         $unit = $army['units']->where('id', $unit_id)->first()['object']->transform($army['object']);
         $armies->transform(function ($army) {
             return $army['object'];
