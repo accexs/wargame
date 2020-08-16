@@ -7,8 +7,10 @@ namespace Domain\WarModule\Entities;
 use Domain\WarModule\Contracts\ArmyBuilderInterface;
 use Domain\WarModule\Contracts\TreasuryInterface;
 use Domain\WarModule\Entities\Units\Soldier;
+use Domain\WarModule\Traits\RecordTrait;
 use Domain\WarModule\Traits\TreasuryTrait;
 use Exception;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use ReflectionClass;
@@ -28,13 +30,17 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
 
     protected $active = false;
 
+    protected $record;
+
     use TreasuryTrait;
+    use RecordTrait;
 
     public function initArmy(): Army
     {
         $this->id = Str::random(9);
         $this->treasure = 1000;
         $this->initialized = true;
+        $this->record = collect();
         return $this;
     }
 
@@ -77,22 +83,24 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
         return $this;
     }
 
-    private function calculateStrength()
+    private function calculateStrength(): Army
     {
         $this->strength = $this->armyUnits->sum('strength');
         return $this;
     }
 
-    public function orderUnitsByStrength(int $slice = 0): Collection
+    public function orderUnitsByStrength(int $slice = 0): Army
     {
         if ($slice > 0) {
-            return $this->armyUnits->sortByDesc('strength')
+            $this->armyUnits = $this->armyUnits->sortByDesc('strength')
                 ->slice($slice);
+            return $this;
         }
-        return $this->armyUnits->sortByDesc('strength');
+        $this->armyUnits = $this->armyUnits->sortByDesc('strength')->values();
+        return $this;
     }
 
-    public function refreshArmyDistribution(Soldier $changedSoldier = null)
+    public function refreshArmyDistribution(Soldier $changedSoldier = null): Army
     {
         if (empty($changedSoldier)) {
             $this->armyUnits->transform(function ($soldier) {
@@ -107,11 +115,10 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
             }
             return $soldier;
         });
-        $this->calculateStrength();
-        return $this->armyUnits;
+        return $this->calculateStrength();
     }
 
-    public function getArmyStats()
+    public function getArmyStats(): array
     {
         return [
             'id' => $this->id,
@@ -120,11 +127,31 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
             'treasure' => isset($this->treasure) ? $this->treasure : 'N/A',
             'strength' => $this->strength,
             'units' => $this->armyUnits,
+            'record' => $this->record,
         ];
     }
 
-    public function getArmyUnits() {
+    public function getArmyUnits()
+    {
         return $this->armyUnits;
+    }
+
+    public function generateRecord(Army $opponent, $result): Army
+    {
+        $record['date'] = Carbon::now();
+        $record['result'] = $result;
+        $record['strength'] = $this->strength;
+        $record['opponent'] = [
+            'id' => $opponent->id,
+            'name' => $opponent->name,
+        ];
+        $this->record = $this->record->push($record);
+        return $this;
+    }
+
+    public function getRecord()
+    {
+        return $this->record;
     }
 
 }

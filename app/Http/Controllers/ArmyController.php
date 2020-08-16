@@ -37,6 +37,10 @@ class ArmyController extends Controller
     public function index()
     {
         $armies = Cache::get('armies');
+        if (empty($armies)) {
+            // TODO: change to empty http code
+            return response()->json([]);
+        }
         $armies->transform(function ($army) {
             return $army->getArmyStats();
         });

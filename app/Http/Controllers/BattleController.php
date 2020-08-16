@@ -19,6 +19,7 @@ class BattleController extends Controller
         });
         $attArmy = $armies->where('id', $request->attacker_id)->first();
         $defArmy = $armies->where('id', $request->defender_id)->first();
+        // TODO: return not found when no armies
         $battle = new Battle($attArmy['object'], $defArmy['object']);
         $result = $battle->clash()->generateResults()->getBattleStats();
         $armies->transform(function ($army) {
