@@ -6,6 +6,10 @@ use Domain\WarModule\Entities\Army;
 
 interface ArmyBuilderInterface
 {
+
     public function initArmy(): Army;
+
     public function raiseArmy(): Army;
+
+    public function removeUnit(string $id): Army;
 }

@@ -5,6 +5,7 @@ namespace Domain\WarModule\Entities;
 
 
 use Domain\WarModule\Contracts\ArmyBuilderInterface;
+use Domain\WarModule\Contracts\RecordInterface;
 use Domain\WarModule\Contracts\TreasuryInterface;
 use Domain\WarModule\Entities\Units\Soldier;
 use Domain\WarModule\Traits\TreasuryTrait;
@@ -14,7 +15,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use ReflectionClass;
 
-abstract class Army implements ArmyBuilderInterface, TreasuryInterface
+abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordInterface
 {
 
     protected $id;
@@ -68,7 +69,7 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
         return collect($armyDistribution);
     }
 
-    public function removeUnit(string $id)
+    public function removeUnit(string $id): Army
     {
         if (empty($this->armyUnits)) {
             throw new Exception('No units on the army');
@@ -147,7 +148,7 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface
         return $this;
     }
 
-    public function getRecord()
+    public function getRecord(): Collection
     {
         return $this->record;
     }

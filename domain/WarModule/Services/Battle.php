@@ -4,10 +4,11 @@
 namespace Domain\WarModule\Services;
 
 
+use Domain\WarModule\Contracts\BattleInterface;
 use Domain\WarModule\Entities\Army;
 use Exception;
 
-class Battle
+class Battle implements BattleInterface
 {
 
     const IS_TIE = 'tie';
