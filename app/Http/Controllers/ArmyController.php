@@ -53,14 +53,15 @@ class ArmyController extends Controller
         $armies = Cache::get('armies');
         if (empty($armies)) {
             // TODO: return not found
-            return response()->json([],404);
+            return response()->json([], 404);
         }
         $armies->transform(function ($army) {
             return $army->getArmyStats() + ['object' => $army];
         });
         $army = $armies->where('id', $army_id)->first();
         // TODO: return not found for unit
-        $unit = $army['units']->where('id', $unit_id)->first()['object']->training($army['object']);
+        $unit = $army['units']->where('id', $unit_id)
+            ->first()['object']->training($army['object']);
         $armies->transform(function ($army) {
             return $army['object'];
         });
@@ -73,14 +74,15 @@ class ArmyController extends Controller
         $armies = Cache::get('armies');
         if (empty($armies)) {
             // TODO: return not found
-            return response()->json([],404);
+            return response()->json([], 404);
         }
         $armies->transform(function ($army) {
             return $army->getArmyStats() + ['object' => $army];
         });
         $army = $armies->where('id', $army_id)->first();
         // TODO: return not found for unit
-        $unit = $army['units']->where('id', $unit_id)->first()['object']->transform($army['object']);
+        $unit = $army['units']->where('id', $unit_id)
+            ->first()['object']->transform($army['object']);
         $armies->transform(function ($army) {
             return $army['object'];
         });
