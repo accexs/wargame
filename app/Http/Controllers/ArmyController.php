@@ -11,8 +11,6 @@ class ArmyController extends Controller
 {
 
     // TODO: think persistence strategy
-    // TODO: extend base controller to handle exceptions
-
     private $armyRepository;
 
     public function __construct(ArmyRepositoryInterface $armyRepository)
