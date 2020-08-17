@@ -44,7 +44,7 @@ class ArmyRepository extends BaseRepository implements ArmyRepositoryInterface
     {
         $army = CivilizationFactory::createCivilizationArmy($civilization, $name);
         $armies = $this->all('armies');
-        if (!empty($armies)) {
+        if ($armies->isNotEmpty()) {
             $armies = $armies->push($army);
             $this->create('armies', $armies);
             return $army;
@@ -62,7 +62,7 @@ class ArmyRepository extends BaseRepository implements ArmyRepositoryInterface
     public function findArmyUnit(string $armyId, string $unitId): array
     {
         $armies = $this->all('armies');
-        if (empty($armies)) {
+        if ($armies->isEmpty()) {
             throw new Exception('No armies found');
         }
         $army = $armies->filter(function ($ArmyItem) use ($armyId) {

@@ -25,6 +25,7 @@ class UnitChangedNotification
      * @param  UnitChanged  $event
      *
      * @return void
+     * @throws \ReflectionException
      */
     public function handle(UnitChanged $event)
     {

@@ -149,8 +149,8 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
             $this->armyUnits->transform(function ($soldier) {
                 return $soldier['object']->getStats() + ['object' => $soldier['object']];
             });
-            $this->calculateStrength();
-            return $this->armyUnits;
+            $this->orderUnitsByStrength();
+            return $this->calculateStrength();
         }
         $this->armyUnits->transform(function ($soldier) use ($changedSoldier) {
             if ($changedSoldier->id === $soldier['id']) {
@@ -158,6 +158,7 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
             }
             return $soldier;
         });
+        $this->orderUnitsByStrength();
         return $this->calculateStrength();
     }
 

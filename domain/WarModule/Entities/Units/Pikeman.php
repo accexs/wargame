@@ -4,6 +4,7 @@
 namespace Domain\WarModule\Entities\Units;
 
 
+use App\Events\Domain\WarModule\TreasureChanged;
 use App\Events\Domain\WarModule\UnitChanged;
 use Domain\WarModule\Entities\Army;
 
@@ -28,19 +29,5 @@ class Pikeman extends Soldier
             'target' => Archer::class,
             'cost' => 30,
         ];
-    }
-
-    /**
-     * @param  Army  $army
-     * @return Soldier
-     */
-    public function transform(Army $army): Soldier
-    {
-        $soldier = new $this->transformTarget['target'];
-        $soldier->id = $this->id;
-        $soldier->strengthPoints = $this->strengthPoints;
-        $soldier->ratePoints = $this->ratePoints;
-        event(new UnitChanged($army, $this));
-        return $soldier;
     }
 }

@@ -24,7 +24,7 @@ class BaseRepository implements CacheRepositoryInterface
     public function find(string $entityName, string $id): object
     {
         $entities = $this->all($entityName);
-        if (empty($entities)) {
+        if ($entities->isEmpty()) {
             throw new \Exception('not found');
         }
 

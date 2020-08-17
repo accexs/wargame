@@ -3,7 +3,6 @@
 namespace App\Events\Domain\WarModule;
 
 use Domain\WarModule\Entities\Army;
-use Domain\WarModule\Entities\Units\Soldier;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,25 +11,28 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UnitChanged
+class TreasureChanged
 {
-
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $unit;
-
     public $army;
+
+    public $action;
+
+    public $amount;
 
     /**
      * Create a new event instance.
      *
      * @param  Army  $army
-     * @param  Soldier  $unit
+     * @param $action
+     * @param $amount
      */
-    public function __construct(Army $army, Soldier $unit)
+    public function __construct(Army $army, string $action, int $amount)
     {
-        $this->unit = $unit;
         $this->army = $army;
+        $this->action = $action;
+        $this->amount = $amount;
     }
 
     /**

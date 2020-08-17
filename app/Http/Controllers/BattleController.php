@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Repository\ArmyRepositoryInterface;
 use Domain\WarModule\Services\Battle;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder;
 

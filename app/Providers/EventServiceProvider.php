@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\Domain\WarModule\TreasureChanged;
 use App\Events\Domain\WarModule\UnitChanged;
+use App\Listeners\Domain\WarModule\Listeners\TreasureChangedNotification;
 use App\Listeners\Domain\WarModule\Listeners\UnitChangedNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -24,6 +26,9 @@ class EventServiceProvider extends ServiceProvider
         UnitChanged::class => [
             UnitChangedNotification::class,
         ],
+        TreasureChanged::class => [
+            TreasureChangedNotification::class
+        ]
     ];
 
     /**

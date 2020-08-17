@@ -4,6 +4,7 @@
 namespace Domain\WarModule\Entities\Units;
 
 
+use App\Events\Domain\WarModule\TreasureChanged;
 use App\Events\Domain\WarModule\UnitChanged;
 use Domain\WarModule\Entities\Army;
 use Illuminate\Support\Str;
@@ -58,6 +59,7 @@ abstract class Soldier
     {
         $this->strengthPoints = $this->strengthPoints + $this->ratePoints;
         event(new UnitChanged($army, $this));
+        event(new TreasureChanged($army, "remove", $this->trainingCost));
         return $this;
     }
 
@@ -80,6 +82,15 @@ abstract class Soldier
      * @param  Army  $army
      * @return Soldier
      */
-    public abstract function transform(Army $army): Soldier;
+    public function transform(Army $army): Soldier
+    {
+        $soldier = new $this->transformTarget['target'];
+        $soldier->id = $this->id;
+        $soldier->strengthPoints = $this->strengthPoints;
+        $soldier->ratePoints = $this->ratePoints;
+        event(new UnitChanged($army, $this));
+        event(new TreasureChanged($army, "remove", $this->transformTarget['cost']));
+        return $soldier;
+    }
 
 }
