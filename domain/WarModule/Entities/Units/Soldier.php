@@ -8,25 +8,52 @@ use App\Events\Domain\WarModule\UnitChanged;
 use Domain\WarModule\Entities\Army;
 use Illuminate\Support\Str;
 use ReflectionClass;
+use ReflectionException;
 
+/**
+ * Class Soldier
+ * @package Domain\WarModule\Entities\Units
+ */
 abstract class Soldier
 {
 
+    /**
+     * @var string
+     */
     public $id;
 
+    /**
+     * @var
+     */
     public $strengthPoints;
 
+    /**
+     * @var
+     */
     protected $ratePoints;
 
+    /**
+     * @var
+     */
     protected $trainingCost;
 
+    /**
+     * @var
+     */
     protected $transformTarget;
 
+    /**
+     * Soldier constructor.
+     */
     public function __construct()
     {
         $this->id = Str::random(9);
     }
 
+    /**
+     * @param  Army  $army
+     * @return $this
+     */
     public function training(Army $army)
     {
         $this->strengthPoints = $this->strengthPoints + $this->ratePoints;
@@ -34,6 +61,10 @@ abstract class Soldier
         return $this;
     }
 
+    /**
+     * @return array
+     * @throws ReflectionException
+     */
     public function getStats()
     {
         return [
@@ -45,6 +76,10 @@ abstract class Soldier
         ];
     }
 
+    /**
+     * @param  Army  $army
+     * @return Soldier
+     */
     public abstract function transform(Army $army): Soldier;
 
 }

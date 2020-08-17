@@ -14,26 +14,55 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use ReflectionClass;
+use ReflectionException;
 
+/**
+ * Class Army
+ * @package Domain\WarModule\Entities
+ */
 abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordInterface
 {
 
+    /**
+     * @var
+     */
     protected $id;
 
+    /**
+     * @var
+     */
     protected $armyUnits;
 
+    /**
+     * @var
+     */
     protected $name;
 
+    /**
+     * @var
+     */
     protected $strength;
 
+    /**
+     * @var bool
+     */
     protected $initialized = false;
 
+    /**
+     * @var bool
+     */
     protected $active = false;
 
+    /**
+     * @var
+     */
     protected $record;
 
     use TreasuryTrait;
 
+    /**
+     * @return $this
+     */
     public function initArmy(): Army
     {
         $this->id = Str::random(9);
@@ -43,6 +72,10 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
         return $this;
     }
 
+    /**
+     * @return $this
+     * @throws Exception
+     */
     public function raiseArmy(): Army
     {
         if (!$this->initialized) {
@@ -54,6 +87,9 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
         return $this;
     }
 
+    /**
+     * @return Collection
+     */
     protected function fillArmy(): Collection
     {
         $armyDistribution = [];
@@ -70,6 +106,12 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
     }
 
     // TODO: could transform id into an array and evaluate on the filter
+
+    /**
+     * @param  string  $id
+     * @return $this
+     * @throws Exception
+     */
     public function removeUnit(string $id): Army
     {
         if (empty($this->armyUnits)) {
@@ -83,12 +125,19 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
         return $this;
     }
 
+    /**
+     * @return Army
+     */
     private function calculateStrength(): Army
     {
         $this->strength = $this->armyUnits->sum('strength');
         return $this;
     }
 
+    /**
+     * @param  int  $slice
+     * @return $this
+     */
     public function orderUnitsByStrength(int $slice = 0): Army
     {
         if ($slice > 0) {
@@ -100,6 +149,11 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
         return $this;
     }
 
+    /**
+     * @param  Soldier|null  $changedSoldier
+     * @return Army
+     * @throws ReflectionException
+     */
     public function refreshArmyDistribution(Soldier $changedSoldier = null
     ): Army {
         if (empty($changedSoldier)) {
@@ -118,6 +172,10 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
         return $this->calculateStrength();
     }
 
+    /**
+     * @return array
+     * @throws ReflectionException
+     */
     public function getArmyStats(): array
     {
         return [
@@ -131,11 +189,19 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
         ];
     }
 
+    /**
+     * @return mixed
+     */
     public function getArmyUnits()
     {
         return $this->armyUnits;
     }
 
+    /**
+     * @param  Army  $opponent
+     * @param  string  $result
+     * @return $this
+     */
     public function generateRecord(Army $opponent, $result): Army
     {
         $record['date'] = Carbon::now();
@@ -149,9 +215,20 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
         return $this;
     }
 
+    /**
+     * @return Collection
+     */
     public function getRecord(): Collection
     {
         return $this->record;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
 }

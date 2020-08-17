@@ -7,10 +7,21 @@ namespace Domain\WarModule\Services;
 use Domain\WarModule\Entities\Army;
 use Exception;
 use ReflectionClass;
+use ReflectionException;
 
+/**
+ * Class CivilizationFactory
+ * @package Domain\WarModule\Services
+ */
 abstract class CivilizationFactory
 {
 
+    /**
+     * @param  string  $civName
+     * @param  string  $armyName
+     * @return Army
+     * @throws ReflectionException
+     */
     public static function createCivilizationArmy(string $civName, string $armyName): Army
     {
         $class = ucfirst($civName);

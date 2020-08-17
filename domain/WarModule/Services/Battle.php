@@ -7,26 +7,60 @@ namespace Domain\WarModule\Services;
 use Domain\WarModule\Contracts\BattleInterface;
 use Domain\WarModule\Entities\Army;
 use Exception;
+use ReflectionException;
 
+/**
+ * Class Battle
+ * @package Domain\WarModule\Services
+ */
 class Battle implements BattleInterface
 {
 
+    /**
+     *
+     */
     const IS_TIE = 'tie';
 
+    /**
+     *
+     */
     const HAS_WINNER = 'has_winner';
 
+    /**
+     * @var Army
+     */
     protected $defender;
 
+    /**
+     * @var Army
+     */
     protected $attacker;
 
+    /**
+     * @var
+     */
     protected $loser;
 
+    /**
+     * @var
+     */
     protected $winner;
 
+    /**
+     * @var int
+     */
     public $goldPrize;
 
+    /**
+     * @var
+     */
     private $battleResult;
 
+    /**
+     * Battle constructor.
+     * @param  Army  $attacker
+     * @param  Army  $defender
+     */
     public function __construct(Army $attacker, Army $defender)
     {
         $this->goldPrize = 100;
@@ -34,12 +68,16 @@ class Battle implements BattleInterface
         $this->defender = $defender;
     }
 
+    /**
+     * @return $this
+     * @throws ReflectionException
+     */
     public function clash(): Battle
     {
         $this->battleResult = self::HAS_WINNER;
         $defenderStats = $this->defender->getArmyStats();
         $attackerStats = $this->attacker->getArmyStats();
-        if ($attackerStats['strength']<=0 and $defenderStats['strength'] <=0) {
+        if ($attackerStats['strength'] <= 0 and $defenderStats['strength'] <= 0) {
             throw new Exception('Both armies are empty');
         }
         if ($attackerStats['strength'] > $defenderStats['strength']) {
@@ -54,6 +92,10 @@ class Battle implements BattleInterface
         return $this;
     }
 
+    /**
+     * @return $this
+     * @throws Exception
+     */
     public function generateResults(): Battle
     {
         if ($this->battleResult === self::IS_TIE) {
@@ -81,6 +123,10 @@ class Battle implements BattleInterface
         return $this;
     }
 
+    /**
+     * @return array
+     * @throws ReflectionException
+     */
     public function getBattleStats()
     {
         if ($this->battleResult == self::HAS_WINNER) {
