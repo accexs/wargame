@@ -9,6 +9,7 @@ use Domain\WarModule\Entities\Army;
 use Domain\WarModule\Services\CivilizationFactory;
 use Exception;
 use Illuminate\Support\Collection;
+use ReflectionException;
 
 /**
  * Class ArmyRepository
@@ -17,6 +18,10 @@ use Illuminate\Support\Collection;
 class ArmyRepository extends BaseRepository implements ArmyRepositoryInterface
 {
 
+    /**
+     * @param  string  $entity
+     * @return Collection
+     */
     public function allArmies(string $entity = 'armies'): Collection
     {
         $armies = $this->all($entity);
@@ -29,6 +34,12 @@ class ArmyRepository extends BaseRepository implements ArmyRepositoryInterface
     }
 
 
+    /**
+     * @param  string  $civilization
+     * @param  string  $name
+     * @return Army
+     * @throws ReflectionException
+     */
     public function createArmy(string $civilization, string $name): Army
     {
         $army = CivilizationFactory::createCivilizationArmy($civilization, $name);
@@ -54,7 +65,7 @@ class ArmyRepository extends BaseRepository implements ArmyRepositoryInterface
         if (empty($armies)) {
             throw new Exception('No armies found');
         }
-        $army = $armies->filter(function ($ArmyItem) use ($armyId, $unitId) {
+        $army = $armies->filter(function ($ArmyItem) use ($armyId) {
             return ($ArmyItem->getId() == $armyId);
         })->first();
 
@@ -83,9 +94,9 @@ class ArmyRepository extends BaseRepository implements ArmyRepositoryInterface
     private function alterUnit(string $action, string $armyId, string $unitId): array
     {
         $unit = $this->findArmyUnit($armyId, $unitId);
-        $unit['object']->transform($unit['army_object']);
+        $unit['object']->$action($unit['army_object']);
         $armies = $this->all('armies');
-        $armies->$action(function ($armyItem) use ($unit) {
+        $armies->transform(function ($armyItem) use ($unit) {
             if ($armyItem->getId() == $unit['army_object']->getId()) {
                 return $unit['army_object'];
             }
@@ -93,5 +104,10 @@ class ArmyRepository extends BaseRepository implements ArmyRepositoryInterface
         });
         $this->create('armies', $armies);
         return $unit['object']->getStats();
+    }
+
+    public function findArmy(string $id): Army
+    {
+        return $this->find('armies', $id);
     }
 }

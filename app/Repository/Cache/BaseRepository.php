@@ -5,6 +5,7 @@ namespace App\Repository\Cache;
 
 
 use App\Repository\CacheRepositoryInterface;
+use Domain\WarModule\Entities\Army;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -20,10 +21,16 @@ class BaseRepository implements CacheRepositoryInterface
         return Cache::get($entity) ? Cache::get($entity) : collect();
     }
 
-    public function find(): array
+    public function find(string $entityName, string $id): object
     {
-        // TODO: Implement find() method.
-        return [];
+        $entities = $this->all($entityName);
+        if (empty($entities)) {
+            throw new \Exception('not found');
+        }
+
+        return $entities->filter(function ($entity) use ($id) {
+            return ($entity->getId() == $id);
+        })->first();
     }
 
     public function create(string $entityName, Collection $entity): bool

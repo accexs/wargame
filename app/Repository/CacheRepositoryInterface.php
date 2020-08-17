@@ -4,6 +4,7 @@
 namespace App\Repository;
 
 
+use Domain\WarModule\Entities\Army;
 use Illuminate\Support\Collection;
 
 interface CacheRepositoryInterface
@@ -15,9 +16,11 @@ interface CacheRepositoryInterface
     public function all(string $entity): Collection;
 
     /**
-     * @return array
+     * @param  string  $entity
+     * @param  string  $id
+     * @return Army
      */
-    public function find(): array;
+    public function find(string $entity, string $id): object;
 
     /**
      * @param  string  $entityName

@@ -27,6 +27,12 @@ interface ArmyRepositoryInterface
     public function allArmies(string $entity = 'armies'): Collection;
 
     /**
+     * @param  string  $id
+     * @return Army
+     */
+    public function findArmy(string $id): Army;
+
+    /**
      * @param  string  $armyId
      * @param  string  $unitId
      * @return array

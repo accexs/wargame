@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Repository\ArmyRepositoryInterface;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder;
 
@@ -12,8 +11,7 @@ class ArmyController extends Controller
 {
 
     // TODO: think persistence strategy
-    // TODO: validate all input
-    // TODO: create standard response: success, not found, exception
+    // TODO: extend base controller to handle exceptions
 
     private $armyRepository;
 
@@ -28,7 +26,7 @@ class ArmyController extends Controller
             ['civilization' => 'required', 'name' => 'required']);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return ResponseBuilder::error(400, null, ['errors' => $validator->errors()->all()]);
         }
 
         $army = $this->armyRepository->createArmy($request->civilization,
@@ -49,22 +47,7 @@ class ArmyController extends Controller
 
     public function transformUnit($army_id, $unit_id)
     {
-        $armies = Cache::get('armies');
-        if (empty($armies)) {
-            // TODO: return not found
-            return response()->json([], 404);
-        }
-        $armies->transform(function ($army) {
-            return $army->getArmyStats() + ['object' => $army];
-        });
-        $army = $armies->where('id', $army_id)->first();
-        // TODO: return not found for unit
-        $unit = $army['units']->where('id', $unit_id)
-            ->first()['object']->transform($army['object']);
-        $armies->transform(function ($army) {
-            return $army['object'];
-        });
-        Cache::put('armies', $armies);
+        $unit = $this->armyRepository->transformUnit($army_id, $unit_id);
         return ResponseBuilder::success($unit);
     }
 }

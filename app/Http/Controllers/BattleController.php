@@ -2,35 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Repository\ArmyRepositoryInterface;
 use Domain\WarModule\Services\Battle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder;
 
 class BattleController extends Controller
 {
-    public function battle(Request $request) {
 
-        // TODO: validate request params
-        // TODO: code find method to find armies
-        $armies = Cache::get('armies');
-        if (empty($armies)) {
-            // TODO: return not found
-            return response()->json([],404);
+    private $armyRepository;
+
+    public function __construct(ArmyRepositoryInterface $armyRepository)
+    {
+        $this->armyRepository = $armyRepository;
+    }
+
+    public function battle(Request $request)
+    {
+        $validator = Validator::make($request->all(),
+            ['civilization' => 'attacker_id', 'name' => 'defender_id']);
+
+        if ($validator->fails()) {
+            return ResponseBuilder::error(400, null, ['errors' => $validator->errors()->all()]);
         }
-        $armies->transform(function ($army) {
-            return $army->getArmyStats() + ['object' => $army];
-        });
-        $attArmy = $armies->where('id', $request->attacker_id)->first();
-        $defArmy = $armies->where('id', $request->defender_id)->first();
-        // TODO: return not found when no armies
 
-        // TODO: inject Battle and use setters to set internal objects
-        $battle = new Battle($attArmy['object'], $defArmy['object']);
+        // TODO: this logic should be removed from here to a shared responsability (service/repository)
+        $attArmy = $this->armyRepository->findArmy($request->attacker_id);
+        $defArmy = $this->armyRepository->findArmy($request->defender_id);
+        $battle = new Battle($attArmy, $defArmy);
         $result = $battle->clash()->generateResults()->getBattleStats();
-        $armies->transform(function ($army) {
-            return $army['object'];
+        $armies = $this->armyRepository->all('armies');
+        $armies->transform(function ($armyItem) use ($attArmy, $defArmy) {
+            switch ($armyItem->getId()) {
+                case $attArmy->getId():
+                    return $attArmy;
+                case $defArmy->getId():
+                    return $defArmy;
+            }
+            return $armyItem;
         });
-        Cache::put('armies', $armies);
+        $this->armyRepository->create('armies', $armies);
         return response()->json($result);
     }
 }
