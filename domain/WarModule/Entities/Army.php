@@ -60,9 +60,7 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
 
     use TreasuryTrait;
 
-    /**
-     * @return $this
-     */
+
     public function initArmy(): Army
     {
         $this->id = Str::random(9);
@@ -72,10 +70,7 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
         return $this;
     }
 
-    /**
-     * @return $this
-     * @throws Exception
-     */
+
     public function raiseArmy(): Army
     {
         if (!$this->initialized) {
@@ -106,12 +101,6 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
     }
 
     // TODO: could transform id into an array and evaluate on the filter
-
-    /**
-     * @param  string  $id
-     * @return $this
-     * @throws Exception
-     */
     public function removeUnit(string $id): Army
     {
         if (empty($this->armyUnits)) {
@@ -197,11 +186,6 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
         return $this->armyUnits;
     }
 
-    /**
-     * @param  Army  $opponent
-     * @param  string  $result
-     * @return $this
-     */
     public function generateRecord(Army $opponent, $result): Army
     {
         $record['date'] = Carbon::now();
@@ -215,9 +199,7 @@ abstract class Army implements ArmyBuilderInterface, TreasuryInterface, RecordIn
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
+
     public function getRecord(): Collection
     {
         return $this->record;

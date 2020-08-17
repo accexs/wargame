@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Cache;
 class BattleController extends Controller
 {
     public function battle(Request $request) {
+
+        // TODO: validate request params
+        // TODO: code find method to find armies
         $armies = Cache::get('armies');
         if (empty($armies)) {
             // TODO: return not found
@@ -20,6 +23,8 @@ class BattleController extends Controller
         $attArmy = $armies->where('id', $request->attacker_id)->first();
         $defArmy = $armies->where('id', $request->defender_id)->first();
         // TODO: return not found when no armies
+
+        // TODO: inject Battle and use setters to set internal objects
         $battle = new Battle($attArmy['object'], $defArmy['object']);
         $result = $battle->clash()->generateResults()->getBattleStats();
         $armies->transform(function ($army) {
